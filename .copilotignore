@@ -1,0 +1,35 @@
+# Version control and local metadata
+.git/
+.DS_Store
+
+# Python environment and caches
+.venv/
+venv/
+env/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local secrets and environment files
+.env
+.env.*
+
+# Build/test artifacts
+build/
+dist/
+htmlcov/
+coverage.xml
+
+# Large or non-source content
+data/**
+*.pdf
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+
+# Notebook checkpoints and logs
+.ipynb_checkpoints/
+*.log
