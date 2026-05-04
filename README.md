@@ -32,12 +32,11 @@ docling-lab/
 │   ├── output/                     # Generated outputs/metrics (gitignored)
 │   └── ground-truth/               # Ground truth artifacts (gitignored)
 ├── docs/                           # Workflow, architecture, and git setup notes
+├── docling-wrapper/                # Single FastAPI wrapper service for docling-serve
 ├── notebooks/                      # Evaluation and analysis notebooks
 ├── prompts/                        # Reusable prompt templates
 ├── skills/                         # Implementation skill playbooks
-└── services/
-    ├── extraction-api/             # Custom API service scaffold
-    └── extraction-service/         # Custom processing service scaffold
+└── (no services/ folder)           # Keep architecture simple with one wrapper service
 ```
 
 ## Prerequisites
@@ -91,7 +90,7 @@ uv run label-studio start --host 0.0.0.0 --port 8080
 
 ## How Custom Services Should Integrate
 
-Custom services in `services/` should act as orchestration layers:
+The wrapper service in `docling-wrapper/` should act as the orchestration layer:
 
 1. Accept a request with document reference and extraction schema/profile.
 2. Call Docling Serve HTTP endpoints for extraction.
@@ -105,11 +104,11 @@ Do not add direct code-level coupling to upstream apps.
 
 Recommended approach:
 
-1. Define a versioned Pydantic model for the target schema in your custom service.
+1. Define a versioned Pydantic model for the target schema in the wrapper service.
 2. Add mapping/normalization logic from raw extraction output to the schema model.
 3. Add validation checks for required fields and data types.
 4. Store a small synthetic example input and expected output for regression checks.
-5. Document schema version and usage in the service README.
+5. Document schema version and usage in `docling-wrapper/README.md`.
 
 ## Evaluating Extraction Quality
 
