@@ -16,6 +16,20 @@ env/
 .env
 .env.*
 
+# Lab data artifacts
+data/input/*
+!data/input/.gitkeep
+data/output/*
+!data/output/.gitkeep
+data/ground-truth/*
+!data/ground-truth/.gitkeep
+
+# Common document/image files
+*.pdf
+*.tiff
+*.png
+*.jpg
+
 # Tool caches
 .pytest_cache/
 .mypy_cache/
@@ -40,5 +54,6 @@ coverage.xml
 *.tmp
 
 # IDE/editor
-.vscode/
+.vscode/*
+!.vscode/mcp.json
 .idea/

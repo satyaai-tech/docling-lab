@@ -1,19 +1,43 @@
-# Docling Lab
+# docling-lab
 
-Monorepo for experimenting with document extraction workflows using Docling and annotation workflows with Label Studio.
+Local lab for building and evaluating document extraction workflows with clear service boundaries.
 
-## Workspace Overview
+This repository is designed for experimentation and portfolio-friendly engineering practices:
+
+- Run `docling-serve` as an out-of-the-box extraction service.
+- Run `label-studio` as an out-of-the-box annotation/ground-truth tool.
+- Build custom FastAPI services for orchestration and evaluation.
+- Track extraction quality against synthetic or sanitized ground truth.
+
+## Architecture Guardrails
+
+- Treat `apps/docling-serve` and `apps/label-studio` as external apps.
+- Do not mix dependencies across unrelated apps/services.
+- Use separate environments and dependency files per app/service.
+- Call Docling Serve and Label Studio over HTTP instead of importing internals.
+- Keep committed artifacts public-safe and lightweight.
+
+## Repository Structure
 
 ```text
 docling-lab/
+├── .github/
+│   └── copilot-instructions.md
+├── agents/                         # Agent role definitions for architecture/evaluation
 ├── apps/
-│   ├── docling-serve/      # Docling Serve API app (uv project)
-│   └── label-studio/       # Label Studio local app (uv project)
-├── data/                   # Shared local datasets and files
-├── notebooks/              # Research and experiment notebooks
+│   ├── docling-serve/              # External app wrapper (uv project)
+│   └── label-studio/               # External app wrapper (uv project)
+├── data/
+│   ├── input/                      # Local/synthetic sample inputs (gitignored)
+│   ├── output/                     # Generated outputs/metrics (gitignored)
+│   └── ground-truth/               # Ground truth artifacts (gitignored)
+├── docs/                           # Workflow, architecture, and git setup notes
+├── notebooks/                      # Evaluation and analysis notebooks
+├── prompts/                        # Reusable prompt templates
+├── skills/                         # Implementation skill playbooks
 └── services/
-    ├── extraction-api/     # Planned API service (currently empty)
-    └── extraction-service/ # Planned worker/service layer (currently empty)
+    ├── extraction-api/             # Custom API service scaffold
+    └── extraction-service/         # Custom processing service scaffold
 ```
 
 ## Prerequisites
@@ -27,23 +51,11 @@ Install uv if needed:
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-## Quick Start
-
-From the repository root, set up each app:
-
-```bash
-cd apps/docling-serve && uv sync
-cd ../label-studio && uv sync
-```
-
-## Run Apps
-
-Use separate terminals for each app.
-
-### 1) Docling Serve API
+## Run docling-serve
 
 ```bash
 cd apps/docling-serve
+uv sync
 uv run docling-serve run
 ```
 
@@ -52,54 +64,69 @@ Default endpoints:
 - API: http://127.0.0.1:5001
 - OpenAPI docs: http://127.0.0.1:5001/docs
 
-Development mode with reload:
+Dev mode with reload:
 
 ```bash
 uv run docling-serve dev
 ```
 
-### 2) Label Studio
+## Run label-studio
 
 ```bash
 cd apps/label-studio
+uv sync
 uv run label-studio start --port 8080
 ```
 
-Open:
+UI endpoint:
 
-- UI: http://localhost:8080
+- http://localhost:8080
 
-Optional local data directory:
+Optional local data directory inside the app folder:
 
 ```bash
 LABEL_STUDIO_BASE_DATA_DIR=./.label-studio-data \
 uv run label-studio start --host 0.0.0.0 --port 8080
 ```
 
-## Project Notes
+## How Custom Services Should Integrate
 
-- Each app is managed independently with its own `pyproject.toml` and `uv.lock`.
-- `apps/*/main.py` files are placeholders and are not required to launch Docling Serve or Label Studio.
-- `services/extraction-api` and `services/extraction-service` are scaffolds reserved for future implementation.
+Custom services in `services/` should act as orchestration layers:
 
-## Helpful Commands
+1. Accept a request with document reference and extraction schema/profile.
+2. Call Docling Serve HTTP endpoints for extraction.
+3. Optionally enrich or map outputs to your own Pydantic schemas.
+4. Optionally pull or compare labels exported from Label Studio.
+5. Write evaluation-ready artifacts to `data/output/`.
 
-From each app directory:
+Do not add direct code-level coupling to upstream apps.
 
-```bash
-uv sync
-uv run --help
-```
+## Adding New Extraction Schemas
 
-Label Studio reset (optional):
+Recommended approach:
 
-```bash
-cd apps/label-studio
-rm -rf ./.label-studio-data
-```
+1. Define a versioned Pydantic model for the target schema in your custom service.
+2. Add mapping/normalization logic from raw extraction output to the schema model.
+3. Add validation checks for required fields and data types.
+4. Store a small synthetic example input and expected output for regression checks.
+5. Document schema version and usage in the service README.
 
-## Next Steps
+## Evaluating Extraction Quality
 
-- Add service implementations under `services/`.
-- Add notebooks to `notebooks/` for extraction and evaluation experiments.
-- Add a top-level task runner (Makefile or justfile) for common commands.
+Suggested workflow:
+
+1. Store sanitized or synthetic reference labels in `data/ground-truth/`.
+2. Run extraction and write normalized outputs to `data/output/`.
+3. Compare predicted vs ground-truth fields with deterministic rules.
+4. Produce field-level metrics and aggregate summaries.
+5. Review trends in notebooks and iterate on extraction/schema mapping.
+
+## Development Setup Files Added
+
+- Copilot guidance: `.github/copilot-instructions.md`
+- Prompt templates: `prompts/`
+- Implementation playbooks: `skills/`
+- Agent role definitions: `agents/`
+- Supporting docs: `docs/`
+
+See `docs/development-workflow.md` and `docs/service-architecture.md` for detailed guidance.

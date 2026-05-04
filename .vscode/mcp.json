@@ -1,0 +1,5 @@
+{
+  "$schema": "https://json.schemastore.org/json",
+  "note": "Placeholder MCP configuration. Add local-safe tool settings here when needed.",
+  "servers": {}
+}
