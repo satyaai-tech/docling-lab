@@ -1,19 +1,27 @@
 [project]
-name = "docling-wrapper"
+name = "wrapper-services"
 version = "0.1.0"
 description = "FastAPI wrapper service for calling docling-serve endpoints"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+  "docling>=2.92.0",
   "fastapi>=0.115.0",
   "httpx>=0.28.0",
+  "openai>=2.33.0",
+  "pillow>=12.2.0",
   "pydantic>=2.9.0",
   "pydantic-settings>=2.6.0",
+  "pymupdf>=1.27.2.3",
+  "pypdf>=6.10.2",
   "python-multipart>=0.0.12",
+  "requests>=2.33.1",
   "uvicorn>=0.32.0",
 ]
 
 [tool.uv]
 dev-dependencies = [
   "pytest>=8.3.0",
+  "ipykernel>=6.0.0",
+  "jupyterlab>=4.0.0",
 ]

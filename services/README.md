@@ -11,14 +11,17 @@ FastAPI wrapper that forwards requests to Docling Serve.
 ## Endpoints
 
 - `GET /health`
-- `POST /v1/wrapper/convert/url`
 - `POST /v1/wrapper/convert/file`
+- `POST /v1/wrapper/convert/file/async`
+- `GET /v1/wrapper/tasks/{task_id}/status`
+- `GET /v1/wrapper/tasks/{task_id}/result`
 
 ## Run
 
 ```bash
-cd docling-wrapper
+cd services
 uv sync
+source .venv/bin/activate
 uv run uvicorn app.main:app --host 0.0.0.0 --port 8001 --reload
 ```
 

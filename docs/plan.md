@@ -74,7 +74,7 @@ Routing policy (draft):
 
 Preferred initial shape:
 
-- Single `docling-wrapper` FastAPI service for orchestration + Docling calls.
+- Single `services` FastAPI wrapper service for orchestration + Docling calls.
 - Evaluation logic can live as a module/endpoint in the same service until complexity grows.
 
 Deferred decision:
