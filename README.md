@@ -129,3 +129,20 @@ Suggested workflow:
 - Supporting docs: `docs/`
 
 See `docs/development-workflow.md` and `docs/service-architecture.md` for detailed guidance.
+
+
+
+docker run -it \
+  -p 5001:5001 \
+  -e DOCLING_SERVE_ENABLE_REMOTE_SERVICES=true \
+  -e DOCLING_SERVE_ALLOW_CUSTOM_VLM_CONFIG=true \
+  --name docling-serve \
+  ghcr.io/docling-project/docling-serve-cpu:latest
+
+
+curl --location 'http://localhost:5001/v1/convert/file/async' \
+--form 'files=@"/Users//Downloads/201403_cfpb_loan-estimate_fixed-rate-loan-sample-H24B.pdf"' \
+--form 'pipeline=vlm' \
+--form 'to_formats=json' \
+--form 'to_formats=md' \
+--form 'vlm_pipeline_custom_config={"model_spec":{"name":"granite_docling_ollama","default_repo_id":"ibm/granite-docling:258m","prompt":"Convert this document page to Docling DocTags. Preserve layout, text, tables, and reading order. Return only DocTags.","response_format":"doctags"},"engine_options":{"engine_type":"api","url":"http://host.docker.internal:11434/v1/chat/completions","headers":{"Authorization":"Bearer ollama"},"params":{"model":"ibm/granite-docling:258m","temperature":0,"max_tokens":4000}}}'
